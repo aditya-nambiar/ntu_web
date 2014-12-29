@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script>
+            $(document).ready(function() {
+                $('#myform').ajaxForm(function() {
+                    console.log("File is uploaded")
+                });
+            });
+
+	</script>
+</head>
+<body>
+
+<form id="myform" action="upload.php" method="post" enctype="multipart/form-data">
+	Select image to upload:
+    <input type="file" name="fileToUpload" id="fileToUpload">
+    <input type="submit" value="Upload Image" name="submit">
+</form>
+
+<form id="createGraph" action="python_files/day_of_week.cgi">
+    <input type="submit" value="create">
+</form>
+</body>
+</html>	
