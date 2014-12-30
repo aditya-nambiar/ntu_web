@@ -14,14 +14,14 @@
         $(function() {
             /* Append More Input Files */
             $('#anc_add_more_train').click(function() {
-                $('#spn_inputs_train').append('<input type="file" name="myfile[]"><br>');
+                $('#spn_inputs_train').append('<input type="file" name="myfile_train[]"><br>');
             });
         });
 
         $(function() {
             /* Append More Input Files */
             $('#anc_add_more_test').click(function() {
-                $('#spn_inputs_test').append('<input type="file" name="myfile[]"><br>');
+                $('#spn_inputs_test').append('<input type="file" name="myfile_test[]"><br>');
             });
         });
     </script>
@@ -45,6 +45,47 @@
         });
     })();
     </script>
+    <script>
+        $(document).ready(function() {
+
+            $('#find_anomaly').click(function() {
+                var info ="";
+                console.log(document.forms[0].elements['myfile_train[]']);
+                for(i = 0; i < document.forms[0].elements['myfile_train[]'].length; i++) {
+                    var temp = document.forms[0].elements['myfile_train[]'][i].value;
+                    temp = temp.split('\\');
+                    temp1 = temp[2];
+                    if(temp1 != null && temp1 != " "){
+                        if(i==0)info = "train="+temp1;
+                        else info = info + "&train="+temp1;
+
+                    }
+                }
+                for(i = 0; i < document.forms[1].elements['myfile_test[]'].length; i++) {
+                    var temp = document.forms[1].elements['myfile_test[]'][i].value;
+                    temp = temp.split('\\');
+                    temp1 = temp[2];
+                    if(temp1 != null && temp1 != " "){
+                        if(i==0 && info == "")info = "test="+temp1;
+                        else info = info + "&test="+temp1;
+
+                    }
+                }
+                console.log(info);
+                $.ajax({
+                    data: info,
+                    url: "anomaly.cgi",
+                    dataType: "text",
+                    success: function(result) { console.log("Success!");
+                        document.getElementById('imgGen').style.display = 'block';; console.log("yaya");
+                        console.log(result);
+                    },
+                    error: function(request, error) { console.log("Error"); console.log(request); }
+                });
+
+            });
+        });
+    </script>
 
 </head>
 <body>
@@ -54,11 +95,11 @@
     <div class="dv_add">  <a href="javascript:void(0);" id="anc_add_more_train">Add More File</a></div>
 
     <div id="status"></div>
-    <form action="multupload_train.php" method="post" id='frm_upld' enctype="multipart/form-data">
+    <form action="multupload_train.php" method="post" id='frm_upld_train' enctype="multipart/form-data">
                     <span id='spn_inputs_train'>
-                        <input type="file" name="myfile[]"><br>
-                        <input type="file" name="myfile[]"><br>
-                        <input type="file" name="myfile[]"><br>
+                        <input type="file" id="rajgo" name="myfile_train[]"><br>
+                        <input type="file" name="myfile_train[]"><br>
+                        <input type="file" name="myfile_train[]"><br>
                     </span>
         <input type="submit"   value="Upload Files">
     </form>
@@ -70,16 +111,18 @@
     <div class="dv_add">  <a href="javascript:void(0);" id="anc_add_more_test">Add More File</a></div>
 
     <div id="status"></div>
-    <form action="multupload_test.php" method="post" id='frm_upld' enctype="multipart/form-data">
+    <form action="multupload_test.php" method="post" id='frm_upld_test' enctype="multipart/form-data">
                     <span id='spn_inputs_test'>
-                        <input type="file" name="myfile[]"><br>
-                        <input type="file" name="myfile[]"><br>
-                        <input type="file" name="myfile[]"><br>
+                        <input type="file" name="myfile_test[]"><br>
+                        <input type="file" name="myfile_test[]"><br>
+                        <input type="file" name="myfile_test[]"><br>
                     </span>
         <input type="submit"   value="Upload Files">
     </form>
 
 </div>
+<button  id="find_anomaly" >Find Anomalies</button>
+<img  style="display:none;" id = "imgGen" src = "pics/anom.png">
 
 </body>
 </html>

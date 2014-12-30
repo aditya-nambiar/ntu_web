@@ -7,7 +7,6 @@ import cgi
 cgitb.enable()
 
 print()
-
 import numpy as np
 from sklearn.svm import SVR
 import matplotlib.pyplot as plt
@@ -16,13 +15,14 @@ import random
 import time
 import operator
 import sys
-arg = sys.argv[1]
-fnov = open('../data/Nov Data.csv', 'r')
-foct = open('../data/Oct Data.csv', 'r')
-line = foct.readline()
-line = foct.readline()
+form = cgi.FieldStorage()
+
+all_files_train = form.getlist('train')
+all_files_test = form.getlist('test')
+num_err = 3
 vals = []
 arg1 =-1
+arg = "mon"
 if arg == "mon":
     arg1 = 0
 elif arg == "tue":
@@ -48,51 +48,55 @@ yo2 = []
 
 vals = []
 lc_cnt =2
-while line:
-    arr = line.split(',')
-    if 0 == 0:
-        dt =datetime.datetime.strptime(arr[2],"%m/%d/%y %H:%M")
-        #timeInSec = time.mktime(dt.timetuple())
-        temp = arr[10]
-        holiday = int(arr[11])
-        features = []
-        features = features + [dt.weekday()]
-        features = features + [dt.hour]
-        features = features + [int(temp)]
-        features = features + [int(holiday)]
-        input_vector = input_vector + [features]
-        output_vector = output_vector + [arr[8]]
+for i in all_files_train:
+    f = open('training/'+i,'U')
+    line = f.readline()
+    line = f.readline()
+    while line:
+        arr = line.split(',')
+        if 0 == 0:
+            dt =datetime.datetime.strptime(arr[2],"%m/%d/%y %H:%M")
+            #timeInSec = time.mktime(dt.timetuple())
+            temp = arr[10]
+            holiday = int(arr[11])
+            features = []
+            features = features + [dt.weekday()]
+            features = features + [dt.hour]
+            features = features + [int(temp)]
+            features = features + [int(holiday)]
+            input_vector = input_vector + [features]
+            output_vector = output_vector + [arr[8]]
 
-    line = foct.readline()
+        line = f.readline()
 
-foct.close()
+    f.close()
+for i in all_files_test:
+    f = open('testing/'+i,'U')
+    line = f.readline()
+    line = f.readline()
+    while line:
+        arr = line.split(',')
+        if 0 == 0:
+            dt =datetime.datetime.strptime(arr[2],"%m/%d/%y %H:%M")
+            #timeInSec = time.mktime(dt.timetuple())
+            temp = arr[10]
+            holiday = int(arr[11])
+            features = []
+            yo1 = yo1 + [dt.toordinal()]
+            features = features + [dt.weekday()]
+            features = features + [dt.hour]
+            features = features + [int(temp)]
+            features = features + [int(holiday)]
+            input_vector2 = input_vector2 + [features]
+            output_vector2 = output_vector2 + [arr[8]]
 
-line = fnov.readline()
-line = fnov.readline()
+        line = f.readline()
 
-while line:
-    arr = line.split(',')
-    if 0 == 0:
-        dt =datetime.datetime.strptime(arr[2],"%m/%d/%y %H:%M")
-        #timeInSec = time.mktime(dt.timetuple())
-        temp = arr[10]
-        holiday = int(arr[11])
-        features = []
-        yo1 = yo1 + [dt.toordinal()]
-        features = features + [dt.weekday()]
-        features = features + [dt.hour]
-        features = features + [int(temp)]
-        features = features + [int(holiday)]
-        input_vector2 = input_vector2 + [features]
-        output_vector2 = output_vector2 + [arr[8]]
-
-    line = fnov.readline()
-
-fnov.close()
+    f.close()
 
 svr_rbf = SVR(kernel='rbf', C=200, gamma=0.1)
-print(input_vector2)
 y_rbf = svr_rbf.fit(input_vector, output_vector).predict(input_vector2)
+
 i =0
 j=0
 imp = {}
@@ -112,15 +116,38 @@ for a in input_vector2 :
 
     if j == 24:
         j=0
-        print (len(vals))
-        plt.plot(xdates,vals,linestyle='-', color=np.random.rand(3,1),label=str(curr_date))
+        #plt.plot(xdates,vals,linestyle='-', color=np.random.rand(3,1),label=str(curr_date))
         vals = []
 
     i = i+1
 
-
-sorted_x = sorted(imp.items(), key=operator.itemgetter(1))
+errors = set()
+sorted_x = sorted(imp.items(), key=operator.itemgetter(1),reverse=True)
+k =0
 for key in sorted_x:
+    if k == num_err :
+        break
+    k = k+1
+    errors.add(key[0])
     print(key)
+
+j=0
+i=0
+
+
+for a in output_vector2 :
+    cd =datetime.datetime.fromordinal(int(yo1[i]))
+    curr_date = cd.date()
+    if curr_date in errors :
+        vals = vals + [output_vector2[i]]
+        j = j+1
+
+    if j == 24:
+        j=0
+        plt.plot(xdates,vals,linestyle='-', color=np.random.rand(3,1),label=str(curr_date))
+        vals = []
+
+    i = i+1
 plt.legend()
-plt.show()
+plt.xticks(np.arange(min(xdates), max(xdates)+1, 1.0))
+plt.savefig("pics/anom.png")
