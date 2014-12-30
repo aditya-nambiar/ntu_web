@@ -18,8 +18,10 @@ import sys
 form = cgi.FieldStorage()
 
 all_files_train = form.getlist('train')
+pic = form.getvalue('pic')
 all_files_test = form.getlist('test')
-num_err = 3
+num_err = form.getvalue('err')
+num_err = int(num_err)
 vals = []
 arg1 =-1
 arg = "mon"
@@ -150,4 +152,4 @@ for a in output_vector2 :
     i = i+1
 plt.legend()
 plt.xticks(np.arange(min(xdates), max(xdates)+1, 1.0))
-plt.savefig("pics/anom.png")
+plt.savefig("pics/"+pic+".png")

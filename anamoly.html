@@ -26,6 +26,7 @@
         });
     </script>
     <script>/* JS for Uploader */
+
     (function() {
 
         var bar = $('.bar');
@@ -71,12 +72,18 @@
 
                     }
                 }
+                var t = $('#err').val();
+                info = info+"&err="+t;
+                pic = Date.now();
+                info = info +"&pic="+pic;
                 console.log(info);
                 $.ajax({
                     data: info,
                     url: "anomaly.cgi",
                     dataType: "text",
                     success: function(result) { console.log("Success!");
+                        d = Math.random();
+                        $("#imgGen").attr("src", "pics/"+pic+".png");
                         document.getElementById('imgGen').style.display = 'block';; console.log("yaya");
                         console.log(result);
                     },
@@ -122,7 +129,9 @@
 
 </div>
 <button  id="find_anomaly" >Find Anomalies</button>
-<img  style="display:none;" id = "imgGen" src = "pics/anom.png">
+Number of top errors to find
+<input type="number" id = "err">
+<img  style="display:none;" id = "imgGen" src = "">
 
 </body>
 </html>
