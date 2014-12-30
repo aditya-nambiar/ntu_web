@@ -5,10 +5,59 @@
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script>
             $(document).ready(function() {
-                $('#myform').ajaxForm(function() {
-                    console.log("File is uploaded")
+                $('#myform').ajaxForm({
+                    complete: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+
+            });
+
+            $(document).ready(function() {
+
+                $('#createGrph').click(function() {
+                    pic = Date.now();
+                    var day = $('#day').val();
+                    var dt = "file="+filename+"&pic="+pic+"&day="+day;
+                    console.log("File is updsfdsloaded")
+                    $.ajax({
+                        data: dt,
+                        url: "tp.cgi",
+                        dataType: "text",
+                        success: function(result) { console.log("Success!");
+                                d = new Date();
+                                $("#imgGen").attr("src", "pics/"+pic+".png#"+d.getTime());
+                                document.getElementById('imgGen').style.display = 'block';; console.log("yaya");
+                                console.log(result);
+
+                        },
+                        error: function(request, error) { console.log("Error"); console.log(request); }
+                    });
+
                 });
             });
+            var filename = "";
+            $(document).ready(function() {
+
+                document.getElementById('fileToUpload').onchange = function () {
+                    var temp = this.value;
+                    temp = temp.split('\\');
+                    filename = temp[2];
+                    console.log(temp);
+
+                    console.log('Selected file: ' + temp);
+                };
+
+
+            });
+
+            function create_graph() {
+                    console.log("Adi");
+                    //var logo = document.getElementById('imgGen');
+                    //logo.src = "pics/"+filename;
+            }
+
+
 
 	</script>
 </head>
@@ -20,8 +69,19 @@
     <input type="submit" value="Upload Image" name="submit">
 </form>
 
-<form id="createGraph" action="python_files/day_of_week.cgi">
-    <input type="submit" value="create">
-</form>
+    <button onclick="create_graph()" id="createGrph" >Create Graph</button>
+
+<br>
+<select id="day">
+    <option selected="selected" value="mon">Monday</option>
+    <option value="tue">Tuesday</option>
+    <option value="wed">Wednesday</option>
+    <option value="thur">Thursday</option>
+    <option value="fri">Friday</option>
+    <option value="sat">Saturday</option>
+    <option value="sun">Sunday</option>
+</select>
+<img  style="display:none;" id = "imgGen" src = "pics/yo1.png">
+
 </body>
 </html>	

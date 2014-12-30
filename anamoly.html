@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+    <script src="jquery.form.js"></script>
+
+
+    <script>
+        /* JS for Uploader */
+        $(function() {
+            /* Append More Input Files */
+            $('#anc_add_more_train').click(function() {
+                $('#spn_inputs_train').append('<input type="file" name="myfile[]"><br>');
+            });
+        });
+
+        $(function() {
+            /* Append More Input Files */
+            $('#anc_add_more_test').click(function() {
+                $('#spn_inputs_test').append('<input type="file" name="myfile[]"><br>');
+            });
+        });
+    </script>
+    <script>/* JS for Uploader */
+    (function() {
+
+        var bar = $('.bar');
+        var percent = $('.percent');
+        var status = $('#status');
+
+        $('form').ajaxForm({
+
+            success: function() {
+
+
+            },
+            complete: function(xhr) {
+                console.log(xhr.responseText);
+                status.html(xhr.responseText);
+            }
+        });
+    })();
+    </script>
+
+</head>
+<body>
+
+<h3>Training Data</h3>
+<div id='dv1'>
+    <div class="dv_add">  <a href="javascript:void(0);" id="anc_add_more_train">Add More File</a></div>
+
+    <div id="status"></div>
+    <form action="multupload_train.php" method="post" id='frm_upld' enctype="multipart/form-data">
+                    <span id='spn_inputs_train'>
+                        <input type="file" name="myfile[]"><br>
+                        <input type="file" name="myfile[]"><br>
+                        <input type="file" name="myfile[]"><br>
+                    </span>
+        <input type="submit"   value="Upload Files">
+    </form>
+
+</div>
+
+<h3>Testing Data</h3>
+<div id='dv2'>
+    <div class="dv_add">  <a href="javascript:void(0);" id="anc_add_more_test">Add More File</a></div>
+
+    <div id="status"></div>
+    <form action="multupload_test.php" method="post" id='frm_upld' enctype="multipart/form-data">
+                    <span id='spn_inputs_test'>
+                        <input type="file" name="myfile[]"><br>
+                        <input type="file" name="myfile[]"><br>
+                        <input type="file" name="myfile[]"><br>
+                    </span>
+        <input type="submit"   value="Upload Files">
+    </form>
+
+</div>
+
+</body>
+</html>
