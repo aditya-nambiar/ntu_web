@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+    	.def{width: 400px;margin-left: 15%;}
+    	.newpanel {
+    	width: 400px;
+    	
+		  }
+    	.mypanel {
+    	<!--max-height: 120px;-->
+    	width: 400px;
+   		<!--overflow-y: scroll;-->
+		    }
+    </style>
+<!-- Le styles -->
+<link href="css/bootstrap.css" rel="stylesheet">
+</head>
+ 
+<body>
+ 
+<div class="container">
+ 
+
+<div id="content">
+	<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+		<li class="active"><a href="#red" data-toggle="tab">Statistics</a></li>
+		<li><a href="#orange" data-toggle="tab">Anomaly</a></li>
+		<li><a href="#yellow" data-toggle="tab">Cusum</a></li>
+	</ul>
+
+	<div id="my-tab-content" class="tab-content">
+		<div class="tab-pane active" id="red">
+
+            <form id="myform" action="upload.php" method="post" enctype="multipart/form-data">
+                Select image to upload:
+                <input type="file" name="fileToUpload" id="fileToUpload">
+                <input type="submit" value="Upload Image" name="submit">
+            </form>
+
+            <button  id="createGrph" >Create Graph</button>
+
+            <br>
+            <select id="day">
+                <option selected="selected" value="mon">Monday</option>
+                <option value="tue">Tuesday</option>
+                <option value="wed">Wednesday</option>
+                <option value="thur">Thursday</option>
+                <option value="fri">Friday</option>
+                <option value="sat">Saturday</option>
+                <option value="sun">Sunday</option>
+            </select>
+            <img  style="display:none;" id = "imgGen" src = "pics/yo1.png">
+
+        </div>
+
+		
+		<div class="tab-pane" id="orange">
+			<h3>Training Data</h3>
+			<div id='dv1'>
+			    <div class="dv_add">  <a href="javascript:void(0);" id="anc_add_more_train">Add More File</a></div>
+
+			    <div id="status"></div>
+			    <form action="multupload_train.php" method="post" id='frm_upld_train' enctype="multipart/form-data">
+			                    <span id='spn_inputs_train'>
+			                        <input type="file" id="rajgo" name="myfile_train[]"><br>
+			                        <input type="file" name="myfile_train[]"><br>
+			                        <input type="file" name="myfile_train[]"><br>
+			                    </span>
+			        <input type="submit"   value="Upload Files">
+			    </form>
+
+			</div>
+
+			<h3>Testing Data</h3>
+			<div id='dv2'>
+			    <div class="dv_add">  <a href="javascript:void(0);" id="anc_add_more_test">Add More File</a></div>
+
+			    <div id="status"></div>
+			    <form action="multupload_test.php" method="post" id='frm_upld_test' enctype="multipart/form-data">
+			                    <span id='spn_inputs_test'>
+			                        <input type="file" name="myfile_test[]"><br>
+			                        <input type="file" name="myfile_test[]"><br>
+			                        <input type="file" name="myfile_test[]"><br>
+			                    </span>
+			        <input type="submit"   value="Upload Files">
+			    </form>
+
+			</div>
+			<button  id="find_anomaly" >Find Anomalies</button>
+			Number of top errors to find
+			<input type="number" id = "err">
+			<img  style="display:none;" id = "imgGen2" src = "">
+			
+		</div>
+		
+		<div class="tab-pane" id="yellow">
+
+         <form id="myform3" action="upload.php" method="post" enctype="multipart/form-data">
+             Select image to upload:
+             <input type="file" name="fileToUpload3" id="fileToUpload3">
+             <input type="submit" value="Upload Image" name="submit">
+         </form>
+		  <button  id="createGrph3" >Create Graph</button>
+          <img  style="display:none;" id = "imgGen3" src = "">
+		  
+		</div>
+		<div>
+	</div>
+</div>
+ 
+ 
+<script src="js/jquery-2.1.1.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/swfobject.js" type="text/javascript"></script>
+<script src="js/flash_detect.js" type="text/javascript"></script>
+<script src="js/video.js" type="text/javascript" charset="utf-8"></script>
+<script>
+ 	
+	jQuery(document).ready(function ($) {
+	$('#tabs').tab();
+});
+</script>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://malsup.github.com/jquery.form.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#myform').ajaxForm({
+                    complete: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+                $('#myform3').ajaxForm({
+                    complete: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+
+            });
+
+            $(document).ready(function() {
+
+                $('#createGrph').click(function() {
+                    pic = Date.now();
+                    var day = $('#day').val();
+                    var dt = "file="+filename+"&pic="+pic+"&day="+day;
+                    console.log("File is updsfdsloaded")
+                    $.ajax({
+                        data: dt,
+                        url: "tp.cgi",
+                        dataType: "text",
+                        success: function(result) { console.log("Success!");
+                            d = new Date();
+                            $("#imgGen").attr("src", "pics/"+pic+".png#"+d.getTime());
+                            document.getElementById('imgGen').style.display = 'block';; console.log("yaya");
+                            console.log(result);
+
+                        },
+                        error: function(request, error) { console.log("Error"); console.log(request); }
+                    });
+
+                });
+            });
+			
+
+            $(document).ready(function() {
+
+                $('#createGrph3').click(function() {
+                    pic = Date.now();
+                    var day = $('#day').val();
+                    var dt = "file="+filename3+"&pic="+pic;
+                    console.log("File is updsfdsloaded")
+                    $.ajax({
+                        data: dt,
+                        url: "cusum.cgi",
+                        dataType: "text",
+                        success: function(result) { console.log("Success!");
+                            d = new Date();
+                            $("#imgGen3").attr("src", "pics/"+pic+".png#"+d.getTime());
+                            document.getElementById('imgGen3').style.display = 'block';; console.log("yaya");
+                            console.log(result);
+
+                        },
+                        error: function(request, error) { console.log("Error"); console.log(request); }
+                    });
+
+                });
+            });
+            var filename = "";
+            $(document).ready(function() {
+
+                document.getElementById('fileToUpload').onchange = function () {
+                    var temp = this.value;
+                    temp = temp.split('\\');
+                    filename = temp[2];
+                    console.log(temp);
+
+                    console.log('Selected file: ' + temp);
+                };
+
+
+            });
+            var filename3 = "";
+            $(document).ready(function() {
+
+                document.getElementById('fileToUpload3').onchange = function () {
+                    var temp = this.value;
+                    temp = temp.split('\\');
+                    filename3 = temp[2];
+                    console.log(temp);
+
+                    console.log('Selected file: ' + temp);
+                };
+
+
+            });
+
+
+
+        </script>
+			
+		    <script>
+		        /* JS for Uploader */
+		        $(function() {
+		            /* Append More Input Files */
+		            $('#anc_add_more_train').click(function() {
+		                $('#spn_inputs_train').append('<input type="file" name="myfile_train[]"><br>');
+		            });
+		        });
+
+		        $(function() {
+		            /* Append More Input Files */
+		            $('#anc_add_more_test').click(function() {
+		                $('#spn_inputs_test').append('<input type="file" name="myfile_test[]"><br>');
+		            });
+		        });
+		   
+
+		    (function() {
+
+		        var bar = $('.bar');
+		        var percent = $('.percent');
+		        var status = $('#status');
+
+		        $('form').ajaxForm({
+
+		            success: function() {
+
+
+		            },
+		            complete: function(xhr) {
+		                console.log(xhr.responseText);
+		                status.html(xhr.responseText);
+		            }
+		        });
+		    })();
+		   
+		        $(document).ready(function() {
+
+		            $('#find_anomaly').click(function() {
+		                var info ="";
+		                console.log(document.forms[0].elements['myfile_train[]']);
+		                for(i = 0; i < document.forms[1].elements['myfile_train[]'].length; i++) {
+		                    var temp = document.forms[1].elements['myfile_train[]'][i].value;
+		                    temp = temp.split('\\');
+		                    temp1 = temp[2];
+		                    if(temp1 != null && temp1 != " "){
+		                        if(i==0)info = "train="+temp1;
+		                        else info = info + "&train="+temp1;
+
+		                    }
+		                }
+		                for(i = 0; i < document.forms[2].elements['myfile_test[]'].length; i++) {
+		                    var temp = document.forms[2].elements['myfile_test[]'][i].value;
+		                    temp = temp.split('\\');
+		                    temp1 = temp[2];
+		                    if(temp1 != null && temp1 != " "){
+		                        if(i==0 && info == "")info = "test="+temp1;
+		                        else info = info + "&test="+temp1;
+
+		                    }
+		                }
+		                var t = $('#err').val();
+		                info = info+"&err="+t;
+		                pic = Date.now();
+		                info = info +"&pic="+pic;
+		                console.log(info);
+		                $.ajax({
+		                    data: info,
+		                    url: "anomaly.cgi",
+		                    dataType: "text",
+		                    success: function(result) { console.log("Success!");
+		                        d = Math.random();
+		                        $("#imgGen2").attr("src", "pics/"+pic+".png");
+		                        document.getElementById('imgGen2').style.display = 'block';; console.log("yaya");
+		                        console.log(result);
+		                    },
+		                    error: function(request, error) { console.log("Error"); console.log(request); }
+		                });
+
+		            });
+		        });
+		    </script>
+				
+				
+
+</div> <!-- container -->
+ 
+  
+</body>
+</html> 
