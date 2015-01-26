@@ -100,9 +100,13 @@
              Select image to upload:
              <input type="file" name="fileToUpload3" id="fileToUpload3">
              <input type="submit" value="Upload Image" name="submit">
+			 
          </form>
-		  <button  id="createGrph3" >Create Graph</button>
+Threshold - <input type="number" id = "thresh">
+Drift - <input type="number" id="drift"><br>
+		  <button  id="createGrph3" >Create Graph</button><br>
           <img  style="display:none;" id = "imgGen3" src = "">
+		  
 		  
 		</div>
 		<div>
@@ -169,7 +173,9 @@
                 $('#createGrph3').click(function() {
                     pic = Date.now();
                     var day = $('#day').val();
-                    var dt = "file="+filename3+"&pic="+pic;
+					 var thr = $('#thresh').val();
+					 var drif = $('#drift').val();
+                    var dt = "file="+filename3+"&pic="+pic+"&thresh="+thr+"&drift="+drif;
                     console.log("File is updsfdsloaded")
                     $.ajax({
                         data: dt,

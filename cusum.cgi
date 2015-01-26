@@ -16,6 +16,7 @@ form = cgi.FieldStorage()
 # Get data from fields
 path = form.getvalue('file')
 picname = form.getvalue('pic')
+
 print(path)
 print(picname)
 foct = open('/Applications/MAMP/htdocs/ntu/files/'+path, 'r')
@@ -25,8 +26,8 @@ avg = 0
 line = foct.readline()
 line = foct.readline()
 count = count + 1
-threshold = 1000
-drift = 100
+threshold = (float)(form.getvalue('thresh'))
+drift = (float)(form.getvalue('drift'))
 
 
 while line:
